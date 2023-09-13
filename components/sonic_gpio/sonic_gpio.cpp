@@ -25,7 +25,7 @@ void SonicGPIOComponent::update() {
   float duration = pulseIn(32, HIGH);
   float result = duration * 0.34 / 2;
   if (result > 4500) {
-    ESP_LOGD(TAG, "'%s' - Large distance, fallback to 4,5m!", this->name_.c_str());
+    ESP_LOGD(TAG, "'%s' - Large distance, fallback to 4,5m!, %.2f m", this->name_.c_str(), result);
     result = 4500;
   }
   result = result / 1000;
