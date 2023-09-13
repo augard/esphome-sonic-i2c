@@ -27,6 +27,7 @@ void SonicGPIOComponent::update() {
   if (result > 4500) {
     result = 4500;
   }
+  result = result / 1000;
 
   if (result <= 0) {
     ESP_LOGD(TAG, "'%s' - Distance measurement timed out!", this->name_.c_str());
