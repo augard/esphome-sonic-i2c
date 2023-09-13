@@ -1,7 +1,6 @@
 #include "sonic_gpio.h"
 #include "esphome/core/log.h"
 #include "esphome/core/hal.h"
-#include "Unit_Sonic.h"
 
 namespace esphome {
 namespace sonic_gpio {
@@ -10,11 +9,24 @@ static const char *const TAG = "sonicgpio.sensor";
 
 void SonicGPIOComponent::setup() {
   ESP_LOGCONFIG(TAG, "Setting up Sonic GPIO Sensor...");
-  this->sensor.begin(26, 32);
+  pinMode(26, OUTPUT);
+  pinMode(32, INPUT);
 }
 void SonicGPIOComponent::update() {
-  static float result = 0;
-  result = this->sensor.getDistance();
+  digitalWrite(26, LOW);
+  delayMicroseconds(2);
+  // Sets the trigPin on HIGH state for 10 micro seconds.
+
+  digitalWrite(26, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(26, LOW);
+
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  float duration = pulseIn(32, HIGH);
+  float result = duration * 0.34 / 2;
+  if (result > 4500) {
+    result = 4500;
+  }
 
   if (result <= 0) {
     ESP_LOGD(TAG, "'%s' - Distance measurement timed out!", this->name_.c_str());

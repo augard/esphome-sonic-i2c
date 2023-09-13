@@ -3,7 +3,6 @@
 #include "esphome/core/component.h"
 #include "esphome/core/gpio.h"
 #include "esphome/components/sensor/sensor.h"
-#include "Unit_Sonic.h"
 
 namespace esphome {
 namespace sonic_gpio {
@@ -30,7 +29,6 @@ class SonicGPIOComponent : public sensor::Sensor, public PollingComponent {
   void set_pulse_time_us(uint32_t pulse_time_us);
 
  protected:
-  SONIC_IO sensor;
   GPIOPin *trigger_pin_;
   InternalGPIOPin *echo_pin_;
   ISRInternalGPIOPin echo_isr_;
