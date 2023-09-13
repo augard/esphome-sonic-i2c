@@ -10,34 +10,16 @@ static const char *const TAG = "sonicgpio.sensor";
 
 void SonicGPIOComponent::setup() {
   ESP_LOGCONFIG(TAG, "Setting up Sonic GPIO Sensor...");
-  this->trigger_pin_->setup();
-  this->trigger_pin_->digital_write(false);
-  this->echo_pin_->setup();
-  // isr is faster to access
-  echo_isr_ = echo_pin_->to_isr();
+  this->sensor.begin(26, 32);
 }
 void SonicGPIOComponent::update() {
-  this->trigger_pin_->digital_write(true);
-  delayMicroseconds(this->pulse_time_us_);
-  this->trigger_pin_->digital_write(false);
+  static float result = 0;
+  result = this->sensor.getDistance();
 
-  const uint32_t start = micros();
-  while (micros() - start < timeout_us_ && echo_isr_.digital_read())
-    ;
-  while (micros() - start < timeout_us_ && !echo_isr_.digital_read())
-    ;
-  const uint32_t pulse_start = micros();
-  while (micros() - start < timeout_us_ && echo_isr_.digital_read())
-    ;
-  const uint32_t pulse_end = micros();
-
-  ESP_LOGV(TAG, "Echo took %uµs", pulse_end - pulse_start);
-
-  if (pulse_end - start >= timeout_us_) {
+  if (result <= 0) {
     ESP_LOGD(TAG, "'%s' - Distance measurement timed out!", this->name_.c_str());
     this->publish_state(NAN);
   } else {
-    float result = SonicGPIOComponent::us_to_m(pulse_end - pulse_start);
     ESP_LOGD(TAG, "'%s' - Got distance: %.2f m", this->name_.c_str(), result);
     this->publish_state(result);
   }
@@ -49,12 +31,6 @@ void SonicGPIOComponent::dump_config() {
   ESP_LOGCONFIG(TAG, "  Pulse time: %u µs", this->pulse_time_us_);
   ESP_LOGCONFIG(TAG, "  Timeout: %u µs", this->timeout_us_);
   LOG_UPDATE_INTERVAL(this);
-}
-float SonicGPIOComponent::us_to_m(uint32_t us) {
-  const float speed_sound_m_per_s = 343.0f;
-  const float time_s = us / 1e6f;
-  const float total_dist = time_s * speed_sound_m_per_s;
-  return total_dist / 2.0f;
 }
 float SonicGPIOComponent::get_setup_priority() const { return setup_priority::DATA; }
 void SonicGPIOComponent::set_pulse_time_us(uint32_t pulse_time_us) { this->pulse_time_us_ = pulse_time_us; }

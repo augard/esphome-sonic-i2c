@@ -30,12 +30,7 @@ class SonicGPIOComponent : public sensor::Sensor, public PollingComponent {
   void set_pulse_time_us(uint32_t pulse_time_us);
 
  protected:
-  /// Helper function to convert the specified echo duration in µs to meters.
-  static float us_to_m(uint32_t us);
-  /// Helper function to convert the specified distance in meters to the echo duration in µs.
-
   SONIC_IO sensor;
-
   GPIOPin *trigger_pin_;
   InternalGPIOPin *echo_pin_;
   ISRInternalGPIOPin echo_isr_;

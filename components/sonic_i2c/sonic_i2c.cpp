@@ -6,8 +6,8 @@ static const char * TAG = "SONIC SENSOR" ;
 namespace sonic_i2c_sensor{
 
 void SonicI2C::dump_config() {
-  LOG_SENSOR("", "Ultrasonic Sensor", this);
-  LOG_UPDATE_INTERVAL(this);
+    LOG_SENSOR("", "Ultrasonic Sensor", this);
+    LOG_UPDATE_INTERVAL(this);
 }
 
 
@@ -27,7 +27,7 @@ float SonicI2C::getDistance(){
     } else {
         return Distance;
     }
-  return  0 ;
+    return  0;
 }
 
 void SonicI2C::setup(){
@@ -38,18 +38,14 @@ void SonicI2C::setup(){
 
 
 void SonicI2C::update() {
-   
     float result =  this->getDistance();
-    if(result>=4500|| result<=20)
-    {
-            ESP_LOGI(TAG, "Incorrect Distance Reading");
-         }else{
-            ESP_LOGD(TAG, "'%s' - Got distance: %.2f m", this->name_.c_str(), result);
-           
-      }
+    if (result>=4500|| result<=20) {
+        ESP_LOGI(TAG, "Incorrect Distance Reading");
+    } else {
+        ESP_LOGD(TAG, "'%s' - Got distance: %.2f m", this->name_.c_str(), result);   
+    }
     
     publish_state(result);
-  
 }
 
 }
