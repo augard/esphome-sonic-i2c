@@ -23,18 +23,17 @@ void SonicGPIOComponent::update() {
 
   // Reads the echoPin, returns the sound wave travel time in microseconds
   float duration = pulseIn(32, HIGH);
-  float result = duration * 0.34 / 2;
-  if (result > 4500) {
-    ESP_LOGD(TAG, "'%s' - Large distance, fallback to 4,5m!, %.2f m", this->name_.c_str(), result);
-    result = 4500;
+  float result = duration * 0.34 / 2 / 10;
+  if (result > 450) {
+    ESP_LOGD(TAG, "'%s' - Large distance, fallback to 4,5m!, %.2f cm", this->name_.c_str(), result);
+    result = 450;
   }
-  result = result / 1000;
 
   if (result <= 0) {
     ESP_LOGD(TAG, "'%s' - Distance measurement timed out!", this->name_.c_str());
     this->publish_state(NAN);
   } else {
-    ESP_LOGD(TAG, "'%s' - Got distance: %.2f m", this->name_.c_str(), result);
+    ESP_LOGD(TAG, "'%s' - Got distance: %.2f cm", this->name_.c_str(), result);
     this->publish_state(result);
   }
 }
