@@ -9,7 +9,7 @@ external_components:
         type: local
         path: components 
 
-      components: [sonic_i2c, mfrc522_i2c]
+      components: [sonic_i2c, sonic_gpio, mfrc522_i2c]
 
 esp32:
   board: esp32dev
@@ -48,6 +48,18 @@ sensor:
    name: Distance Sensor
    unit_of_measurement: mm
    update_interval: 5s
+ - platform: sonic_gpio
+   trigger_pin: GPIO26
+   echo_pin: GPIO32
+   unit_of_measurement: "%"
+   icon: "mdi:water-percent"
+   #accuracy_decimals: 0
+   update_interval: 5s
+   #imeout: 4.0m
+   #pulse_time: 30ms
+   name: ${upper_devicename} Waste tank
+   #filters:
+   #  - filter_out: nan
 
 
 # RFID SENSOR with binary sensor
